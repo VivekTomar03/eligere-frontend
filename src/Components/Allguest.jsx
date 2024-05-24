@@ -10,23 +10,29 @@ import {
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Loader from "./Loader";
 
 const MotionCard = motion(Card);
 
 const Allguest = () => {
   const [data, setData] = useState([]);
-
+const [isLoading, setisLoading] = useState(false)
   useEffect(() => {
+    setisLoading(true)
     axios
-      .get("http://localhost:8080/user/")
+      .get("https://backend-eligere.onrender.com/user")
       .then((res) => {
         setData(res.data);
+        setisLoading(false)
       })
       .catch((err) => {
+        setisLoading(false)
         console.log(err);
       });
   }, []);
-
+if(isLoading){
+  return <Loader />
+}
   return (
     <SimpleGrid p={4} mt={2} columns={[1, 2, 3]} spacing={6}>
       {data.map((el) => (

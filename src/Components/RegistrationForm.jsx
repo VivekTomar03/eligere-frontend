@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from "framer-motion";
-import { Box, FormControl, FormLabel, Input, FormErrorMessage, Select, Button } from "@chakra-ui/react";
+import { Box, FormControl, FormLabel, Input, FormErrorMessage, Select, Button, useToast } from "@chakra-ui/react";
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const MotionBox = motion(Box);
 const MotionInput = motion(Input);
 const MotionButton = motion(Button);
 
 const RegistrationForm = () => {
+
+  const [data , setData ] = useState([])
+  const toast = useToast()
+  const navigate = useNavigate()
+  const [isLoading , setLoading] = useState(false)
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -38,11 +45,24 @@ const RegistrationForm = () => {
   };
 
   const handleSubmit = (e) => {
-    
     e.preventDefault();
     const errors = validate();
     if (Object.keys(errors).length === 0) {
-     console.log(formData)
+      setLoading(true)
+     axios.post("https://backend-eligere.onrender.com/user/register", formData)
+     .then((res) => {
+      console.log(res.data)
+      setData(res?.data)
+      setLoading(false)
+      navigate("/confirm")
+      localStorage.setItem("eventuser", JSON.stringify(res?.data))
+      toast({
+        title: res?.data?.message,
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      })
+     })
      setFormData({
       fullName: '',
       email: '',
@@ -50,13 +70,20 @@ const RegistrationForm = () => {
       eventSession: '',
      })
     } else {
+      setLoading(false)
       setErrors(errors);
-      
+      toast({
+        title: errors?.message,
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      })
     }
   };
 
   return (
-    <MotionBox
+  <>
+  <MotionBox
       bg="white"
       p={6}
       border="1px solid grey"
@@ -126,12 +153,22 @@ const RegistrationForm = () => {
             onChange={handleChange}
             color="black"
             border="1px solid grey"
+            styles={{
+              menu: {
+                bg: "white",
+                color: "black",
+              },
+              option: {
+                bg: "white",
+                color: "black",
+              },
+            }}
             _focus={{
               borderColor: "teal.400",
-              boxShadow: "0 0 0 1px teal.400"
+              boxShadow: "0 0 0 1px teal.400",
             }}
           >
-            <option value="">Select an Event</option>
+            <option color='white' value="">Select an Event</option>
             <option value="Harmony-Fest">Harmony Fest</option>
             <option value="Melody-Mania">Melody Mania</option>
             <option value="Rhythm Revelry">Rhythm Revelry</option>
@@ -139,7 +176,7 @@ const RegistrationForm = () => {
           {errors.eventSession && <FormErrorMessage>{errors.eventSession}</FormErrorMessage>}
         </FormControl>
         <MotionButton
-          // isLoading={isLoading}
+          isLoading={isLoading}
           type="submit"
           colorScheme="teal"
           width="full"
@@ -151,6 +188,9 @@ const RegistrationForm = () => {
         </MotionButton>
       </form>
     </MotionBox>
+    
+   
+  </>
   );
 };
 
