@@ -4,9 +4,11 @@ import ConfirmationPage from "./Components/ConfirmationPage";
 import RegistrationForm from "./Components/RegistrationForm";
 
 const App = () => {
+  const [isLoading , setIsLoading] = useState(false)
   const [registrationData, setRegistrationData] = useState(null);
   const toast = useToast();
   const handleFormSubmit = (data) => {
+    setIsLoading(true)
     fetch("https://backend-eligere.onrender.com/register", {
       method: "POST",
       headers: {
@@ -17,6 +19,7 @@ const App = () => {
       .then((response) => response.json())
       .then((data) => {
         if (data.errors) {
+          setIsLoading(false)
           console.error(data.errors);
           toast({
             title: data.errors,
@@ -26,6 +29,7 @@ const App = () => {
             isClosable: true,
           });
         } else {
+          setIsLoading(false)
           setRegistrationData(data);
           toast({
             title: data.message,
@@ -37,6 +41,7 @@ const App = () => {
         }
       })
       .catch((error) => {
+        setIsLoading(false)
         console.error("Error:", error);
         toast({
           title: error,
@@ -53,7 +58,7 @@ const App = () => {
         {registrationData ? (
           <ConfirmationPage setRegistrationData={setRegistrationData} registrationData={registrationData} />
         ) : (
-          <RegistrationForm onSubmit={handleFormSubmit} />
+          <RegistrationForm isLoading={isLoading} onSubmit={handleFormSubmit} />
         )}
       </Box>
     </Container>

@@ -9,7 +9,7 @@ import {
   FormErrorMessage,
 } from '@chakra-ui/react';
 
-const RegistrationForm = ({ onSubmit }) => {
+const RegistrationForm = ({ onSubmit, isLoading }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -72,7 +72,7 @@ const RegistrationForm = ({ onSubmit }) => {
           </Select>
           {errors.eventSession && <FormErrorMessage>{errors.eventSession}</FormErrorMessage>}
         </FormControl>
-        <Button type="submit" colorScheme="teal" width="full">Register</Button>
+        <Button isLoading={isLoading} type="submit" colorScheme="teal" width="full">Register</Button>
       </form>
     </Box>
   );
