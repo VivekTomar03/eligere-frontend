@@ -17,6 +17,9 @@ const theme = extendTheme({
       body: {
         bg: mode("gray.800", "gray.800")(props),
         color: mode("white", "white")(props),
+        backgroundImage: "url('https://i.pinimg.com/originals/53/18/3e/53183edd3a8cba0b1eae7b679c67fc56.gif')",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
       },
     }),
   },
